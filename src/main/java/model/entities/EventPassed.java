@@ -13,7 +13,7 @@ package model.entities;
  * </blockquote>
  * @param <T> Accepts a Custom Type
  */
-public class EventPassed<T> {
+final public class EventPassed<T> {
     private T type;
 
     public EventPassed(T t) {

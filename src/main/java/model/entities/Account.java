@@ -2,7 +2,7 @@ package model.entities;
 
 import model.enums.AccountType;
 
-public class Account {
+final public class Account {
     private final String account;
     private final AccountType type;
 

@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Class responsible for modifying the actual list of the {@link TransactionList}
  */
-public class TransactionListService {
+final public class TransactionListService {
     private Map<String, AccountType> accountTypeMap;
 
     private ArrayList<Transaction> list = TransactionList.getInstance();

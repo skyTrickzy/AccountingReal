@@ -2,7 +2,7 @@ package utils;
 
 import java.awt.*;
 
-public class Constants {
+final public class Constants {
     public static final int FRAME_WIDTH = 1000;
     public static final int FRAME_HEIGHT = 700;
     public static final Font HEADER_FONT_ARIAL = new Font("Arial", Font.BOLD, 36);

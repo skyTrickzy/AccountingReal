@@ -1,12 +1,6 @@
 package controller;
 
-import interfaces.FilterableService;
-import interfaces.UpdateListener;
 import model.entities.EventPassed;
-import model.entities.Executor;
-import model.entities.Transaction;
-import model.entities.TransactionList;
-import model.tables.TransactionTableModel;
 import services.TransactionListService;
 import view.components.TransactionsPage;
 import view.custom.JTableDisplay;
@@ -15,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class TransactionController {
+final public class TransactionController {
     private JTableDisplay tableModel;
     private TransactionListService service = new TransactionListService();
 
@@ -25,7 +19,6 @@ public class TransactionController {
      * <p>Everytime we want to create an instance of an object {@link TransactionController}
      */
     private static final ArrayList<JTableDisplay> models = new ArrayList<>();
-    private static final Executor executor = new Executor();
 
     /**
      * <p> constructor that takes {@link JTableDisplay} as
@@ -48,7 +41,6 @@ public class TransactionController {
 
         service.add(date, description, debit, credit, amount);
         models.forEach(i -> i.displayList(null));
-        executor.execute();
     }
 
     /**
@@ -75,18 +67,6 @@ public class TransactionController {
         if (event.getType() instanceof String) {
             String query = (String) event.getType();
             tableModel.displayList(query);
-            executor.execute();
         }
-    }
-
-
-    /**
-     * <p>a method that updates the UI.
-     * see {@link TransactionsPage}
-     * for the implementation of this method
-     * @param a
-     */
-    public void onUpdate(UpdateListener a) {
-        executor.add(a);
     }
 }

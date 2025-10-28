@@ -1,7 +1,6 @@
 package view.components;
 
 import controller.TransactionController;
-import model.tables.TransactionTableModel;
 import utils.Constants;
 
 import javax.swing.*;
@@ -9,7 +8,7 @@ import java.awt.*;
 import java.time.LocalDate;
 
 public class TransactionCreatorPage extends JPanel {
-    TransactionController controller =  new TransactionController(new TransactionTableModel());
+    TransactionController controller =  new TransactionController();
 
     private GridBagConstraints gbc = new GridBagConstraints();
     private JPanel formPanel;

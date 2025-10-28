@@ -3,7 +3,7 @@ package view.custom;
 import javax.swing.*;
 import java.awt.*;
 
-public class RoundedPanel extends JPanel {
+final public class RoundedPanel extends JPanel {
 
     private int borderRadius;
 

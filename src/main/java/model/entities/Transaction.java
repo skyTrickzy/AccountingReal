@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Transaction {
+final public class Transaction {
     private LocalDate date;
     private String description;
     private Account debitAccount;

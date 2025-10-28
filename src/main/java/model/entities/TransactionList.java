@@ -3,7 +3,7 @@ package model.entities;
 import java.util.ArrayList;
 
 
-public class TransactionList {
+final public class TransactionList {
     /**
      * A final instance so that we dont have to instantiate again
      */

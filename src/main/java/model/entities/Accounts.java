@@ -1,13 +1,6 @@
 package model.entities;
 
-import model.tables.AccountsTableModel;
-
-/**
- * used for accounts list
- *
- * @see AccountsTableModel
- */
-public class Accounts {
+final public class Accounts {
     Account account;
     int amount;
 
