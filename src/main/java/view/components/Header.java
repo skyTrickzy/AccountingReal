@@ -11,7 +11,7 @@ public class Header extends JPanel {
     public Header() {
         setPreferredSize(new Dimension(Constants.FRAME_WIDTH, PANEL_HEIGHT));
         setMaximumSize(new Dimension(Constants.FRAME_WIDTH, PANEL_HEIGHT));
-        setBackground(Color.blue);
+        setBackground(new Color(36, 49, 87));
         setLayout(new GridBagLayout());
 
 

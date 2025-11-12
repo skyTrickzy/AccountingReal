@@ -15,17 +15,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 final public class TransactionsPage extends JPanel {
-    private TransactionTableModel tableModel;
-    private TransactionController controller;
-    private TransactionTable table = null;
+    private TransactionTableModel tableModel = new TransactionTableModel();
+    private TransactionController controller = new TransactionController(tableModel);
+    private TransactionTable table = new TransactionTable(tableModel);
+
     private JButton searchButton;
     private JTextField searchBar;
 
     public TransactionsPage() {
-        tableModel = new TransactionTableModel();
-        table = new TransactionTable(tableModel);
-        controller = new TransactionController(tableModel);
-
         setOpaque(false);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -33,12 +30,12 @@ final public class TransactionsPage extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane);
-
     }
 
     private JPanel searchPanel() {
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.setOpaque(false);
 
         searchPanel.add(searchBar = searchBar());
         searchPanel.add(searchButton = clickEvent());
@@ -81,14 +78,15 @@ class TransactionTable extends JTable {
         setRowHeight(50);
         tableHeader.setFont(new Font("Arial", Font.BOLD, 20));
         setFont(new Font("Arial", Font.PLAIN, 16));
+        setOpaque(false);
     }
 }
 
 class TransactionSearchService implements FilterableService {
-    java.util.List<Transaction> list;
 
     @Override
     public ArrayList<Transaction> filterable(EventPassed<?> e) {
+        System.out.println(TransactionList.getInstance().size());
 
 
         String query = e.getType() == null ? "" : (String) e.getType();
@@ -155,7 +153,7 @@ class TransactionTableModel extends JTableDisplay {
                 String credit = transaction.getCreditAccount().getAccount();
                 return credit.replaceAll("\\s*\\[.*\\]", "");
             case 4:
-                return transaction.getAmount();
+                return "₱" + transaction.getAmount();
 
             default:
                 return null;

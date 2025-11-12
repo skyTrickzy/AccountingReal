@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 final public class TransactionList {
     /**
-     * A final instance so that we dont have to instantiate again
+     * A final instance so that we don't have to instantiate again
      */
     private static final ArrayList<Transaction> instance = new ArrayList<>();
 

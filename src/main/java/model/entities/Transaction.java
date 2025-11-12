@@ -19,7 +19,7 @@ final public class Transaction {
             String description,
             Account debitAccount,
             Account creditAccount,
-            int amount)
+            double amount)
     {
 
         this.date = date;

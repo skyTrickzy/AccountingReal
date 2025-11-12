@@ -2,7 +2,6 @@ package view.components;
 
 import controller.TransactionController;
 import model.entities.Account;
-import model.entities.Accounts;
 import model.entities.Transaction;
 import model.entities.TransactionList;
 import model.enums.AccountType;
@@ -29,7 +28,9 @@ final public class AccountsPage extends JPanel {
     }
 }
 
-class AccountsTable extends JTable {
+// table for display UI
+// use JTableDisplay instead of abstractTableModel
+final class AccountsTable extends JTable {
 
     public AccountsTable(JTableDisplay model) {
         setModel(model);
@@ -41,8 +42,8 @@ class AccountsTable extends JTable {
     }
 }
 
-
-class AccountsListService {
+// a data that handles how the data is processed or logic or doing some calculation
+final class AccountsListService {
     private ArrayList<Accounts> list = new ArrayList<>();
 
     public AccountsListService() {
@@ -103,6 +104,9 @@ class AccountsListService {
         int amount = 0;
         ArrayList<Transaction> list = TransactionList.getInstance();
 
+
+        //TODO: NEEDS SOME FIXING PARTICULARLY WHERE THE ACCOUNT WILL STAY 0 for a certain transaction
+        // because of the fact that when looping through the transaction there's it gets negative.
         for(Transaction obj : list) {
             if (obj.getDebitAccount().getAccount().contains(account)) {
                 AccountType type = obj.getDebitAccount().getType();
@@ -116,11 +120,9 @@ class AccountsListService {
             }
         }
 
-
         for(Transaction obj : list) {
             if (obj.getCreditAccount().getAccount().contains(account)) {
                 AccountType type = obj.getCreditAccount().getType();
-
                 switch(type) {
                     case ASSET, EXPENSE ->
                         amount -= obj.getAmount();
@@ -134,7 +136,8 @@ class AccountsListService {
     }
 }
 
-class AccountsTableModel extends JTableDisplay {
+// a class that handles how the data is gonna be displayed
+final class AccountsTableModel extends JTableDisplay {
     private AccountsListService service = new AccountsListService();
     private List<Accounts> list = service.getList();
 
@@ -175,13 +178,35 @@ class AccountsTableModel extends JTableDisplay {
             }
 
             case 2 -> {
-                return acc.getAmount();
+                return "₱" + acc.getAmount();
             }
 
             default -> {
                 return null;
             }
         }
+    }
+}
+// used for accounts list or data cells
+final class Accounts {
+    Account account;
+    int amount;
+
+    public Accounts(Account account, int amount) {
+        this.account = account;
+        this.amount = amount;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 }
 

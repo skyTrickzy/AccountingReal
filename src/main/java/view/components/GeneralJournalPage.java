@@ -12,9 +12,5 @@ public class GeneralJournalPage extends JPanel {
     public GeneralJournalPage() {
         setOpaque(false);
         setLayout(new GridBagLayout());
-        test();
-    }
-
-    public void test() {
     }
 }

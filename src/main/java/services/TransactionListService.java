@@ -71,7 +71,7 @@ final public class TransactionListService {
                     String description,
                     String debit,
                     String credit,
-                    int amount) {
+                    double amount) {
 
         Account debitAccount = null;
         Account creditAccount = null;
@@ -93,5 +93,9 @@ final public class TransactionListService {
 
 
 
+    }
+
+    public void clearAll() {
+        list.clear();
     }
 }

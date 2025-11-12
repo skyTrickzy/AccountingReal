@@ -37,10 +37,12 @@ final public class TransactionController {
                                String description,
                                String debit,
                                String credit,
-                               int amount) {
+                               double amount) {
 
         service.add(date, description, debit, credit, amount);
-        models.forEach(i -> i.displayList(null));
+
+        models.forEach(i ->
+            i.displayList(null));
     }
 
     /**
@@ -68,5 +70,10 @@ final public class TransactionController {
             String query = (String) event.getType();
             tableModel.displayList(query);
         }
+    }
+
+    public void clearTransactions() {
+        service.clearAll();
+        models.forEach(i -> i.displayList(null));
     }
 }

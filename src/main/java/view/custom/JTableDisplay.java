@@ -14,4 +14,9 @@ public abstract class JTableDisplay extends AbstractTableModel {
      * @param query can be {@code null} if default
      */
     public abstract void displayList(String query);
+
+
+    public void DebugPrint() {
+        System.out.println(getClass().getName() + " Succesfuly executed");
+    }
 }

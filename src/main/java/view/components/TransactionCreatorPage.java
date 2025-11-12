@@ -5,6 +5,7 @@ import utils.Constants;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 
 public class TransactionCreatorPage extends JPanel {
@@ -29,30 +30,28 @@ public class TransactionCreatorPage extends JPanel {
 
     // unfinished
     private void onClickEvent() {
-
-
         String dateStr = date.getText();
         String descStr = desc.getText();
         String selectedDebit = (String) debitAccount.getSelectedItem();
         String selectedCredit = (String) creditAccount.getSelectedItem();
-        String amountStr = amount.getText();
+        String strAmount = amount.getText();
 
+        DecimalFormat df = new DecimalFormat("#.##");
         try {
             LocalDate newDate = LocalDate.parse(dateStr);
-            int intAmount = Integer.parseInt(amountStr);
-            controller.addTransaction(newDate, descStr, selectedDebit, selectedCredit, intAmount);
+            double amount = Double.parseDouble(strAmount);
+            double formatted = Double.parseDouble(df.format(amount));
+
+            controller.addTransaction(newDate, descStr, selectedDebit, selectedCredit, formatted);
         }
         catch (Exception e) {
-            System.out.println(e);
+            JOptionPane.showMessageDialog(null, e);
         }
-
-        // transcationController.add(date, description, debit, credit, amount);
-        // "CASH" is the debit and "INVENTORY ASSET" to credit, Controller handles the what type of
-        // transaction controller handles the type they are. ,
-        // CASH becomes ASSET, and so is inventory becoming asset,
-        // Cash is then inserted into the debit group and inventory is added to credit group,
     }
 
+    public void clearAllTransactions() {
+        controller.clearTransactions();
+    }
 
 
 
@@ -67,17 +66,32 @@ public class TransactionCreatorPage extends JPanel {
     }
 
     private JPanel buttonPanel() {
-        JPanel panel = new JPanel();
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        JPanel panel = new JPanel(new GridBagLayout());
 
         panel.setPreferredSize(new Dimension(500, 30));
+        panel.setMaximumSize(new Dimension(500, 30));
         panel.setOpaque(false);
 
-        button.setPreferredSize(new Dimension(500, 25));
-        button.setText("Submit");
+        JButton btn1 = new JButton("Submit");
+        btn1.addActionListener(e -> onClickEvent());
 
-        button.addActionListener(e -> onClickEvent());
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 10, 0, 10);
 
-        panel.add(button);
+        panel.add(btn1, gbc);
+
+        JButton btn2 = new JButton("Clear All");
+        btn2.addActionListener(e -> clearAllTransactions());
+
+        gbc.gridx = 1;
+
+        panel.add(btn2, gbc);
 
         return panel;
     }
@@ -159,7 +173,7 @@ public class TransactionCreatorPage extends JPanel {
     }
 
     private void panels() {
-        JLabel label = new JLabel("model.entities.Transaction Form");
+        JLabel label = new JLabel("Transaction Form");
         formPanel = new JPanel();
         JPanel extraPanel = new JPanel();
 
