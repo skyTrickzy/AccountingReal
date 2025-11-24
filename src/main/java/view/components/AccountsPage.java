@@ -2,6 +2,7 @@ package view.components;
 
 import controller.TransactionController;
 import model.entities.Account;
+import model.entities.Accounts;
 import model.entities.Transaction;
 import model.entities.TransactionList;
 import model.enums.AccountType;
@@ -26,10 +27,18 @@ final public class AccountsPage extends JPanel {
         add(pane);
 
     }
+
+    public ArrayList<Accounts> getListInstance() {
+        return new AccountsListService().getInstance();
+    }
 }
 
-// table for display UI
-// use JTableDisplay instead of abstractTableModel
+/**
+ * JTable is a stand alone UI doesnt have to do anything
+ * who sets the logic of how a data is gonna be displayed is the JAbstractTableModel
+ * that's extend into JTableDisplay
+ * so in other words table is the view, The model is the data processor
+ */
 final class AccountsTable extends JTable {
 
     public AccountsTable(JTableDisplay model) {
@@ -44,12 +53,22 @@ final class AccountsTable extends JTable {
 
 // a data that handles how the data is processed or logic or doing some calculation
 final class AccountsListService {
-    private ArrayList<Accounts> list = new ArrayList<>();
+    private static ArrayList<Accounts> list = new ArrayList<>();
 
     public AccountsListService() {
-        initialize();
+        if (list.isEmpty()) {
+            initialize();
+        }
     }
 
+    public ArrayList<Accounts> getInstance() {
+        return list;
+    }
+
+    /**
+     * can be ignored
+     * this is initializes the list for a table to display something
+     */
     private void initialize() {
         for (String a: Constants.ACCOUNTS) {
             String replaced = a.replaceAll("\\s*\\[.*\\]", "");
@@ -94,6 +113,11 @@ final class AccountsListService {
         return list;
     }
 
+    /**
+     * responsible for updating the balance of each account
+     * basically we loop through the Account list then, we
+     * set the amount of each accounts
+     */
     public void calculateAll() {
         for (Accounts a : list) {
             a.setAmount(calculateTotalAmount(a.getAccount().getAccount()));
@@ -107,9 +131,27 @@ final class AccountsListService {
 
         //TODO: NEEDS SOME FIXING PARTICULARLY WHERE THE ACCOUNT WILL STAY 0 for a certain transaction
         // because of the fact that when looping through the transaction there's it gets negative.
+
+
+        /**
+         *
+         * so how this works is that it has a parameter account and tries to match the account if
+         * theres a transaction of that said account, then we are gonna add that
+         * so we loop first through the debit account side, then the next is credit account
+         * for example we search for cash account in the debit side
+         * if cash is found then we add that
+         * and then for cash credit side
+         * if cash is found since cash is now a credit we subtract it
+         */
+        AccountType current = null;
+
         for(Transaction obj : list) {
             if (obj.getDebitAccount().getAccount().contains(account)) {
+
+                current = obj.getDebitAccount().getType();
+
                 AccountType type = obj.getDebitAccount().getType();
+
                 switch (type) {
                     case ASSET, EXPENSE ->
                             amount += obj.getAmount();
@@ -120,29 +162,46 @@ final class AccountsListService {
             }
         }
 
+        /**
+         * looks for the credit side of an account
+         */
         for(Transaction obj : list) {
             if (obj.getCreditAccount().getAccount().contains(account)) {
                 AccountType type = obj.getCreditAccount().getType();
                 switch(type) {
                     case ASSET, EXPENSE ->
-                        amount -= obj.getAmount();
+                        amount -= (int) obj.getAmount();
                     case LIABILITY, EQUITY, REVENUE, INCOME ->
-                        amount += obj.getAmount();
+                        amount += (int) obj.getAmount();
                 }
             }
         }
-
-        return amount < 0 ? 0 : amount;
+        // we dont want to let the internal amount be set to zero
+        return amount;
     }
 }
 
-// a class that handles how the data is gonna be displayed
+
+/**
+ * A custom filterable for certain tables that needs a way to categorize some list by any means
+ * if you dont see a filterable that means theres no filterable being implemented
+ * this is the model responsible for how the data is gonna be displayed
+ * model is basically the one controls how data is gonna be displayed
+ * JTableDisplay is an extension of the JAbstractTableModel
+ */
 final class AccountsTableModel extends JTableDisplay {
-    private AccountsListService service = new AccountsListService();
-    private List<Accounts> list = service.getList();
+    private final AccountsListService service = new AccountsListService();
+    private final List<Accounts> list = service.getList();
 
     private final String[] columnNames = {"Account", "Type", "Balance"};
 
+    /**
+     * displayList is the one responsible for firing the table to basically update again
+     * the reason we need this is because we need a unified way of updating the UI
+     * so that is why we need the controller updates the UI if you look at the code
+     * of {@code TransactionController} this method is invoked there
+     * @param query can be {@code null} if default
+     */
     @Override
     public void displayList(String query) {
         service.calculateAll();
@@ -164,6 +223,12 @@ final class AccountsTableModel extends JTableDisplay {
         return columnNames[column];
     }
 
+    /**
+     * the main responsiblity of the model how everything is going to be displayed
+     * @param rowIndex        the row whose value is to be queried
+     * @param columnIndex     the column whose value is to be queried
+     * @return
+     */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Accounts acc = list.get(rowIndex);
@@ -178,7 +243,7 @@ final class AccountsTableModel extends JTableDisplay {
             }
 
             case 2 -> {
-                return "₱" + acc.getAmount();
+                return "₱" + (Math.max(acc.getAmount(), 0));
             }
 
             default -> {
@@ -187,26 +252,3 @@ final class AccountsTableModel extends JTableDisplay {
         }
     }
 }
-// used for accounts list or data cells
-final class Accounts {
-    Account account;
-    int amount;
-
-    public Accounts(Account account, int amount) {
-        this.account = account;
-        this.amount = amount;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-}
-

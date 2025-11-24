@@ -2,7 +2,6 @@ package view.components;
 
 import controller.TransactionController;
 import interfaces.FilterableService;
-import model.entities.EventPassed;
 import model.entities.Transaction;
 import model.entities.TransactionList;
 import view.custom.JTableDisplay;
@@ -48,7 +47,7 @@ final public class TransactionsPage extends JPanel {
         JButton btn = new JButton("Search");
 
         btn.addActionListener(l -> {
-            controller.filterEvent(new EventPassed<>(searchBar.getText()));
+            controller.filterEvent(searchBar.getText());
         });
 
         return btn;
@@ -69,6 +68,12 @@ final public class TransactionsPage extends JPanel {
      */
 }
 
+/**
+ * JTable is a stand alone UI doesnt have to do anything
+ * who sets the logic of how a data is gonna be displayed is the JAbstractTableModel
+ * that's extend into JTableDisplay
+ * so in other words table is the view, The model is the data processor
+ */
 class TransactionTable extends JTable {
 
     public TransactionTable(AbstractTableModel model) {
@@ -84,40 +89,57 @@ class TransactionTable extends JTable {
 
 class TransactionSearchService implements FilterableService {
 
+
+
     @Override
-    public ArrayList<Transaction> filterable(EventPassed<?> e) {
+    public ArrayList<Transaction> filterable(String query) {
         System.out.println(TransactionList.getInstance().size());
 
 
-        String query = e.getType() == null ? "" : (String) e.getType();
+        if (query == null) {
+            query = "";
+        }
 
         if (query.trim().isEmpty()) {
             return TransactionList.getInstance();
         }
 
 
+        String finalQuery = query;
         List<Transaction> list = TransactionList.getInstance()
                 .stream()
-                .filter(item -> item.getDescription().contains(query))
+                .filter(item -> item.getDescription().contains(finalQuery))
                 .collect(Collectors.toList());
 
         return (ArrayList<Transaction>) list;
     }
 }
-
+/**
+ * A custom filterable for certain tables that needs a way to categorize some list by any means
+ * if you dont see a filterable that means theres no filterable being implemented
+ * this is the model responsible for how the data is gonna be displayed
+ * model is basically the one controls how data is gonna be displayed
+ * JTableDisplay is an extension of the JAbstractTableModel
+ */
 class TransactionTableModel extends JTableDisplay {
     private TransactionSearchService searchService = new TransactionSearchService();
-    private  List<Transaction> transactionList = searchService.filterable(new EventPassed<>(null));
+    private  List<Transaction> transactionList = searchService.filterable("");
     private final String[] columnNames = {"Date", "Description", "Debit", "Credit", "Amount"};
 
     public void setTransactionList(List<Transaction> transactionList) {
         this.transactionList = transactionList;
     }
 
-
+    /**
+     * displayList is the one responsible for firing the table to basically update again
+     * the reason we need this is because we need a unified way of updating the UI
+     * so that is why we need the controller updates the UI if you look at the code
+     * of {@code TransactionController} this method is invoked there
+     * @param query can be {@code null} if default
+     */
     @Override
     public void displayList(String query) {
-        transactionList = searchService.filterable(new EventPassed<>(query));
+        transactionList = searchService.filterable(query);
         fireTableDataChanged();
     }
 
@@ -136,6 +158,12 @@ class TransactionTableModel extends JTableDisplay {
         return columnNames[column];
     }
 
+    /**
+     * the main responsiblity of the model how everything is going to be displayed
+     * @param rowIndex        the row whose value is to be queried
+     * @param columnIndex     the column whose value is to be queried
+     * @return
+     */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
 

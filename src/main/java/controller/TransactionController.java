@@ -1,6 +1,5 @@
 package controller;
 
-import model.entities.EventPassed;
 import services.TransactionListService;
 import view.components.TransactionsPage;
 import view.custom.JTableDisplay;
@@ -34,15 +33,15 @@ final public class TransactionController {
     public TransactionController() {}
 
     public void addTransaction(LocalDate date,
-                               String description,
-                               String debit,
-                               String credit,
+                               java.lang.String description,
+                               java.lang.String debit,
+                               java.lang.String credit,
                                double amount) {
 
         service.add(date, description, debit, credit, amount);
 
         models.forEach(i ->
-            i.displayList(null));
+            i.displayList(""));
     }
 
     /**
@@ -65,11 +64,8 @@ final public class TransactionController {
      *
      * @param event Represents an event with a custom Variable Datatype accepted
      */
-    public void filterEvent(EventPassed<?> event) {
-        if (event.getType() instanceof String) {
-            String query = (String) event.getType();
-            tableModel.displayList(query);
-        }
+    public void filterEvent(String event) {
+            tableModel.displayList(event);
     }
 
     public void clearTransactions() {

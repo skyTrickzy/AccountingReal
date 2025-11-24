@@ -1,6 +1,5 @@
 package interfaces;
 
-import model.entities.EventPassed;
 import model.entities.Transaction;
 
 import java.util.ArrayList;
@@ -17,5 +16,5 @@ public interface FilterableService {
      * @param e
      * @return void
      */
-    ArrayList<Transaction> filterable(EventPassed<?> e);
+    ArrayList<Transaction> filterable(String e);
 }
