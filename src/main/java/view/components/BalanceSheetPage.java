@@ -189,8 +189,8 @@ class EquityLiabilityModel extends JTableDisplay implements Charts {
 
 
         return switch (columnIndex) {
-            case 1 -> "hello";
-            default -> "god";
+            case 1 -> "Work in progress";
+            default -> "work in progress";
         };
     }
 }
