@@ -99,8 +99,8 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
     public ArrayList<Transaction> filterable(String e) {
 
         return (ArrayList<Transaction>) list.stream().filter(i -> {
-            if (i.getCreditAccount().getAccount().contains(e.toString()) ||
-                    i.getDebitAccount().getAccount().contains(e.toString())) return true;
+            if (i.getCreditAccount().getAccountName().contains(e.toString()) ||
+                    i.getDebitAccount().getAccountName().contains(e.toString())) return true;
 
             return false;
         }).collect(Collectors.toList());
@@ -156,8 +156,8 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
         return switch(columnIndex) {
             case 0 -> a.getDate();
             case 1 -> a.getDescription();
-            case 2 -> a.getDebitAccount().getAccount();
-            case 3 -> a.getCreditAccount().getAccount();
+            case 2 -> a.getDebitAccount().getAccountName();
+            case 3 -> a.getCreditAccount().getAccountName();
             case 4 -> "₱" + a.getAmount();
             default -> null;
         };

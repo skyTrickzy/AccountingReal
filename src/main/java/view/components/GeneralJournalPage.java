@@ -65,28 +65,30 @@ final class GeneralJournalModel extends JTableDisplay {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
 
+        // Ensure that the rowIndex is valid
+        if (rowIndex < 0 || rowIndex >= list.size() * 2) {
+            return null;
+        }
+
         if (rowIndex % 2 == 0) {
-            Transaction transaction = list.get(rowIndex);
+            // Even row: Access the transaction normally
+            Transaction transaction = list.get(rowIndex / 2); // Divide by 2 to access the correct transaction
 
-
-            return switch(columnIndex) {
-                // gamiti ang methods provided by transcation
-                // example transaction.getDescription();
-                // para sa accounts kay getDebitAccount.getAccount();q
-
+            return switch (columnIndex) {
                 case 0 -> transaction.getDate(); // Date
                 case 1 -> transaction.getDescription(); // Description
-                case 2 -> transaction.getDebitAccount().getAccount(); // Account
-                case 3 -> transaction.getAmount(); // Debit
-                default -> null; // none
+                case 2 -> transaction.getDebitAccount().getAccountName(); // Debit Account
+                case 3 -> transaction.getAmount(); // Debit Amount
+                default -> null; // For any other columns, return null
             };
-        }
-        else {
-            Transaction transaction = list.get(rowIndex - 1);
-            return switch(columnIndex) {
-                case 2 -> transaction.getCreditAccount().getAccount(); // Account
-                case 4 -> transaction.getAmount(); // Cash
-                default -> null;
+        } else {
+            // Odd row: Access the previous transaction (rowIndex - 1)
+            Transaction transaction = list.get((rowIndex - 1) / 2); // Divide by 2 to access the correct transaction
+
+            return switch (columnIndex) {
+                case 2 -> transaction.getCreditAccount().getAccountName(); // Credit Account
+                case 4 -> transaction.getAmount(); // Credit Amount
+                default -> null; // For any other columns, return null
             };
         }
     }

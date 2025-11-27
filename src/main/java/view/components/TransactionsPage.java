@@ -175,10 +175,10 @@ class TransactionTableModel extends JTableDisplay {
             case 1:
                 return transaction.getDescription();
             case 2:
-                String debit = transaction.getDebitAccount().getAccount();
+                String debit = transaction.getDebitAccount().getAccountName();
                 return debit.replaceAll("\\s*\\[.*\\]", "");
             case 3:
-                String credit = transaction.getCreditAccount().getAccount();
+                String credit = transaction.getCreditAccount().getAccountName();
                 return credit.replaceAll("\\s*\\[.*\\]", "");
             case 4:
                 return "₱" + transaction.getAmount();

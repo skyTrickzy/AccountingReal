@@ -11,7 +11,7 @@ final public class Account {
         this.type = type;
     }
 
-    public String getAccount() {
+    public String getAccountName() {
         return account;
     }
 

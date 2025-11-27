@@ -14,7 +14,6 @@ public class MainWindow extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         setDefaultCloseOperation(this.EXIT_ON_CLOSE);
-        setVisible(true);
         setResizable(false);
         getContentPane().setBackground(Constants.BG_COLOR);
 
@@ -22,5 +21,7 @@ public class MainWindow extends JFrame {
         add(new Header());
         add(Box.createRigidArea(new Dimension(0, 40)));
         add(new Body());
+
+        setVisible(true);
     }
 }

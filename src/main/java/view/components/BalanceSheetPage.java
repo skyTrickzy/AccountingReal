@@ -3,8 +3,6 @@ package view.components;
 import controller.TransactionController;
 import model.entities.Account;
 import model.entities.Accounts;
-import model.entities.Transaction;
-import model.entities.TransactionList;
 import model.enums.AccountType;
 import view.custom.JTableDisplay;
 
@@ -94,9 +92,12 @@ class AssetSideModel extends JTableDisplay{
         ArrayList<AccountAmount> tempList = new ArrayList<>();
 
         for (Accounts temp : list) {
-            if (temp.getAccount().getType() == AccountType.ASSET) {
+            System.out.println(temp.getAccount().getType() + " " +  temp.getAmount());
+
+            AccountType currentType = temp.getAccount().getType();
+            if (currentType == AccountType.ASSET) {
                 if (temp.getAmount() < 0 || temp.getAmount() > 0) {
-                    tempList.add(new AccountAmount(new Account(temp.getAccount().getAccount(), temp.getAccount().getType()), temp.getAmount()));
+                    tempList.add(new AccountAmount(new Account(temp.getAccount().getAccountName(), temp.getAccount().getType()), temp.getAmount()));
                 }
             }
         }
@@ -152,23 +153,78 @@ class AssetSideModel extends JTableDisplay{
         AccountAmount temp = currentList.get(rowIndex);
 
         return switch (columnIndex) {
-            case 0 -> temp.getAccount().getAccount();
+            case 0 -> temp.getAccount().getAccountName();
             default -> "P" + temp.getAmount();
         };
     }
 }
 
-class EquityLiabilityModel extends JTableDisplay implements Charts {
+class EquityLiabilityModel extends JTableDisplay {
     String[] headers = {"Equity and Liabilities", "Amount"};
+    ArrayList<AccountAmount> currentList = new ArrayList<>();
+    ArrayList<Accounts> list = new AccountsPage().getListInstance();
+    ArrayList<Accounts> copiedList = new ArrayList<>(list);
 
-    @Override
-    public void getAccounts() {
+    public void updateList() {
+        ArrayList<AccountAmount> tempList = new ArrayList<>();
+
+        for (Accounts temp : copiedList) {
+
+            AccountType currentType = temp.getAccount().getType();
+
+            if (currentType == AccountType.LIABILITY) {
+
+                if (temp.getAmount() < 0 || temp.getAmount() > 0) {
+                    tempList.add(new AccountAmount(new Account(temp.getAccount().getAccountName(), temp.getAccount().getType()), temp.getAmount()));
+                }
+
+                continue;
+            }
+
+            if (currentType == AccountType.EQUITY) {
+                temp.setAmount(totalNet() + temp.getAmount());
+                if (temp.getAmount() < 0 || temp.getAmount() > 0) {
+                    tempList.add(new AccountAmount(new Account(temp.getAccount().getAccountName(), temp.getAccount().getType()), temp.getAmount()));
+                }
+            }
+        }
+
+        currentList = tempList;
     }
 
+    private int calculateAssets() {
+        int totalAssets = 0;
+
+        for (AccountAmount acc : currentList) {
+            totalAssets += acc.getAmount();
+        }
+
+        return totalAssets;
+    }
+
+    private Double totalNet() {
+        double netIncome = 0.0;
+
+        for (Accounts temp : list) {
+            AccountType currentType = temp.getAccount().getType();
+
+            if (currentType == AccountType.INCOME) {
+                netIncome += temp.getAmount();
+                System.out.println(netIncome);
+            } else if (currentType == AccountType.EXPENSE) {
+                netIncome -= temp.getAmount();
+                System.out.println(netIncome);
+            }
+        }
+
+        return netIncome;
+    }
     @Override
     public void displayList(String query) {
-
+        updateList();
+        fireTableDataChanged();
     }
+
     @Override
     public String getColumnName(int column) {
         return headers[column];
@@ -176,7 +232,7 @@ class EquityLiabilityModel extends JTableDisplay implements Charts {
 
     @Override
     public int getRowCount() {
-        return 2;
+        return currentList.size() + 2;
     }
 
     @Override
@@ -188,22 +244,31 @@ class EquityLiabilityModel extends JTableDisplay implements Charts {
     public Object getValueAt(int rowIndex, int columnIndex) {
 
 
+        if (rowIndex == currentList.size()) {
+            return null;
+        }
+
+        if (rowIndex == currentList.size() + 1) {
+            return switch (columnIndex) {
+                case 0 -> "Total Assets: ";
+                default -> calculateAssets();
+            };
+        }
+
+        AccountAmount temp = currentList.get(rowIndex);
+
         return switch (columnIndex) {
-            case 1 -> "Work in progress";
-            default -> "work in progress";
+            case 0 -> temp.getAccount().getAccountName();
+            default -> "P" + temp.getAmount();
         };
     }
 }
 
-interface Charts {
-    public void getAccounts();
-}
-
 class AccountAmount {
     private Account account;
-    private int amount;
+    private double amount;
 
-    AccountAmount(Account account, int amount) {
+    AccountAmount(Account account, double amount) {
         this.account = account;
         this.amount = amount;
     }
@@ -212,11 +277,11 @@ class AccountAmount {
         return account;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 

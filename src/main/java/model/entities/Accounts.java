@@ -6,9 +6,9 @@ package model.entities;
  */
 public final class Accounts {
     Account account;
-    int amount;
+    double amount;
 
-    public Accounts(Account account, int amount) {
+    public Accounts(Account account, double amount) {
         this.account = account;
         this.amount = amount;
     }
@@ -17,11 +17,11 @@ public final class Accounts {
         return account;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 }

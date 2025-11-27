@@ -95,7 +95,7 @@ final class AccountsListService {
                     break;
 
                 case "Sales Revenue":
-                case "Service Income":
+                case "Service Revenue":
                     list.add(new Accounts(new Account(replaced, AccountType.INCOME), 0));
                     break;
 
@@ -120,7 +120,7 @@ final class AccountsListService {
      */
     public void calculateAll() {
         for (Accounts a : list) {
-            a.setAmount(calculateTotalAmount(a.getAccount().getAccount()));
+            a.setAmount(calculateTotalAmount(a.getAccount().getAccountName()));
         }
     }
 
@@ -146,7 +146,7 @@ final class AccountsListService {
         AccountType current = null;
 
         for(Transaction obj : list) {
-            if (obj.getDebitAccount().getAccount().contains(account)) {
+            if (obj.getDebitAccount().getAccountName().contains(account)) {
 
                 current = obj.getDebitAccount().getType();
 
@@ -166,7 +166,7 @@ final class AccountsListService {
          * looks for the credit side of an account
          */
         for(Transaction obj : list) {
-            if (obj.getCreditAccount().getAccount().contains(account)) {
+            if (obj.getCreditAccount().getAccountName().contains(account)) {
                 AccountType type = obj.getCreditAccount().getType();
                 switch(type) {
                     case ASSET, EXPENSE ->
@@ -235,7 +235,7 @@ final class AccountsTableModel extends JTableDisplay {
 
         switch (columnIndex) {
             case 0 -> {
-                return acc.getAccount().getAccount();
+                return acc.getAccount().getAccountName();
             }
 
             case 1 -> {
