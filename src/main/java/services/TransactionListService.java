@@ -9,10 +9,7 @@ import view.components.AccountsPage;
 
 import javax.swing.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Class responsible for modifying the actual list of the {@link TransactionList}
@@ -91,12 +88,22 @@ final public class TransactionListService {
             creditAccount = new Account(credit, creditType);
         }
 
-        int state = validate(debitAccount, creditAccount, amount);
+        int state = validate( debitAccount, creditAccount, amount, date);
 
         if (state == -1) return;
 
         Transaction transaction = new Transaction(date, description, debitAccount, creditAccount, amount);
         list.add(transaction);
+
+        String message = "The entry has been succesfully submitted.\n"
+                + "Date: " + date + "\n"
+                + "Description: " + description + "\n"
+                + "Debit Account: " + debitAccount.getAccountName() + "\n"
+                + "Credit Account: " + creditAccount.getAccountName() + "\n"
+                + "Amount: " + amount + "\n"
+                + "Thank you for using our application!";
+
+        JOptionPane.showMessageDialog(null, message, "Entry submitted Successfully", JOptionPane.INFORMATION_MESSAGE);
 
     }
 
@@ -104,12 +111,36 @@ final public class TransactionListService {
         list.clear();
     }
 
-    private int validate(Account debitAccount, Account creditAccount, double amount) {
+    private int validate(Account debitAccount, Account creditAccount, double amount, LocalDate date) {
         ArrayList<Accounts> list = new AccountsPage().getListInstance();
 
+        if (date.isAfter(LocalDate.now())) {
+            String message = "Error: The entry date (" + date + ") cannot be in the future!";
+            JOptionPane.showMessageDialog(null, message, "Date Error", JOptionPane.ERROR_MESSAGE);
+            return -1;
+        }
+
+        if (amount <= 0 ) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Error: Transaction amounts cannot be zero or negative.\n" +
+                            "All debit and credit amounts must be greater than zero to maintain accounting integrity\n" +
+                            "and ensure proper balance of the accounting equation.",
+                    "Invalid Entry",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return -1;
+        }
+
         if (Objects.equals(debitAccount.getAccountName(), creditAccount.getAccountName())) {
-            JOptionPane.showMessageDialog(null, "Error: Transaction should not involved having" +
-                    "having both the same account be credited and debited eg. Cash on credit and debit", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Error: A transaction cannot involve the same account being both credited and debited.\n" +
+                            "Please check your entries to ensure each account is used correctly.",
+                    "Invalid Transaction",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
             return -1;
         }
 
@@ -142,9 +173,9 @@ final public class TransactionListService {
 
             for (Accounts a : list) {
 
-                errorMessage = "Credit " + "Error: "  + "in " + a.getAccount().getAccountName() + ", you tried to input an amount of " + amount + ", "
-                        + "but the balance for your " + a.getAccount().getAccountName() + " is: "
-                        + "P" + a.getAmount();
+                errorMessage = "Credit Error: Invalid input for account '" + a.getAccount().getAccountName() + "'.\n" +
+                        "You attempted to input an amount of P" + amount + ", but the current balance for this account is P" + a.getAmount() + ".\n" +
+                        "Please ensure that the transaction amount is within the available balance.";
 
                 AccountType temp = a.getAccount().getType();
                 if (temp == currentType)
@@ -172,9 +203,10 @@ final public class TransactionListService {
             AccountType currentType = debitAccount.getType();
 
             for (Accounts a : list) {
-                errorMessage = "Debit " + "Error: "  + "in " + a.getAccount().getAccountName() + ", you tried to input an amount of " + amount + ", "
-                        + "but the balance for your " + a.getAccount().getAccountName() + " is: "
-                        + "P" + a.getAmount() + " Either you don't have balance or you paid more than what is needed";
+                errorMessage = "Error: Invalid debit entry for account '" + a.getAccount().getAccountName() + "'.\n" +
+                        "You attempted to debit an amount of P" + amount + ", but the current balance for this account is P" + a.getAmount() + ".\n" +
+                        "Either the account has insufficient funds, or the amount debited exceeds the available balance.";
+
 
                 AccountType temp = a.getAccount().getType();
                 if (temp == currentType)
@@ -190,6 +222,8 @@ final public class TransactionListService {
                 }
             }
         }
+
+
         return 0;
     }
 }

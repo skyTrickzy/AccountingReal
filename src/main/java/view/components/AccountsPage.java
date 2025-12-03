@@ -124,8 +124,8 @@ final class AccountsListService {
         }
     }
 
-    public int calculateTotalAmount(String account) {
-        int amount = 0;
+    public double calculateTotalAmount(String account) {
+        double amount = 0;
         ArrayList<Transaction> list = TransactionList.getInstance();
 
 
@@ -170,9 +170,9 @@ final class AccountsListService {
                 AccountType type = obj.getCreditAccount().getType();
                 switch(type) {
                     case ASSET, EXPENSE ->
-                        amount -= (int) obj.getAmount();
+                        amount -= obj.getAmount();
                     case LIABILITY, EQUITY, REVENUE, INCOME ->
-                        amount += (int) obj.getAmount();
+                        amount += obj.getAmount();
                 }
             }
         }

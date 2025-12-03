@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class GeneralLedgerPage extends JPanel {
@@ -127,6 +128,9 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
     @Override
     public void displayList(String query) {
         currentList = filterable(query);
+        currentList =  (ArrayList<Transaction>) currentList.stream()
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())  // Sort by LocalDate
+                .collect(Collectors.toList());
         fireTableDataChanged();
     }
 

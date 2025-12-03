@@ -105,8 +105,8 @@ class AssetSideModel extends JTableDisplay{
         currentList = tempList;
     }
 
-    public int calculateAssets() {
-            int totalAssets = 0;
+    public double calculateAssets() {
+            double totalAssets = 0;
 
             for (AccountAmount acc : currentList) {
                 totalAssets += acc.getAmount();
@@ -146,7 +146,7 @@ class AssetSideModel extends JTableDisplay{
         if (rowIndex == currentList.size() + 1) {
             return switch (columnIndex) {
                 case 0 -> "Total Assets: ";
-                default -> calculateAssets();
+                default -> "₱" + calculateAssets();
             };
         }
 
@@ -154,7 +154,7 @@ class AssetSideModel extends JTableDisplay{
 
         return switch (columnIndex) {
             case 0 -> temp.getAccount().getAccountName();
-            default -> "P" + temp.getAmount();
+            default -> "₱" + temp.getAmount();
         };
     }
 }
@@ -173,7 +173,6 @@ class EquityLiabilityModel extends JTableDisplay {
             AccountType currentType = temp.getAccount().getType();
 
             if (currentType == AccountType.LIABILITY) {
-
                 if (temp.getAmount() < 0 || temp.getAmount() > 0) {
                     tempList.add(new AccountAmount(new Account(temp.getAccount().getAccountName(), temp.getAccount().getType()), temp.getAmount()));
                 }
@@ -192,8 +191,8 @@ class EquityLiabilityModel extends JTableDisplay {
         currentList = tempList;
     }
 
-    private int calculateAssets() {
-        int totalAssets = 0;
+    private double calculateEquityAndLiability() {
+        double totalAssets = 0;
 
         for (AccountAmount acc : currentList) {
             totalAssets += acc.getAmount();
@@ -250,8 +249,8 @@ class EquityLiabilityModel extends JTableDisplay {
 
         if (rowIndex == currentList.size() + 1) {
             return switch (columnIndex) {
-                case 0 -> "Total Assets: ";
-                default -> calculateAssets();
+                case 0 -> "Total Equity and Liabilities: ";
+                default -> "₱" + calculateEquityAndLiability();
             };
         }
 
@@ -259,7 +258,7 @@ class EquityLiabilityModel extends JTableDisplay {
 
         return switch (columnIndex) {
             case 0 -> temp.getAccount().getAccountName();
-            default -> "P" + temp.getAmount();
+            default -> "₱" + temp.getAmount();
         };
     }
 }
