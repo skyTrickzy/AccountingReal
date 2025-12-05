@@ -39,10 +39,15 @@ public class TransactionCreatorPage extends JPanel {
         DecimalFormat df = new DecimalFormat("#.##");
         try {
             LocalDate newDate = LocalDate.parse(dateStr);
-            double amount = Double.parseDouble(strAmount);
-            double formatted = Double.parseDouble(df.format(amount));
+            double amounts = Double.parseDouble(strAmount);
+            double formatted = Double.parseDouble(df.format(amounts));
 
-            controller.addTransaction(newDate, descStr, selectedDebit, selectedCredit, formatted);
+            boolean isTransactionSuccessful = controller.addTransaction(newDate, descStr, selectedDebit, selectedCredit, formatted);
+            if (isTransactionSuccessful) {
+                date.setText("");
+                desc.setText("");
+                amount.setText("");
+            }
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
@@ -86,7 +91,7 @@ public class TransactionCreatorPage extends JPanel {
 
         panel.add(btn1, gbc);
 
-        JButton btn2 = new JButton("Clear All");
+        JButton btn2 = new JButton("Remove All Transactions");
         btn2.addActionListener(e -> clearAllTransactions());
 
         gbc.gridx = 1;

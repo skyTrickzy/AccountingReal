@@ -32,16 +32,22 @@ final public class TransactionController {
 
     public TransactionController() {}
 
-    public void addTransaction(LocalDate date,
+    public boolean addTransaction(LocalDate date,
                                java.lang.String description,
                                java.lang.String debit,
                                java.lang.String credit,
                                double amount) {
 
-        service.add(date, description, debit, credit, amount);
+        try {
+            service.add(date, description, debit, credit, amount);
+        } catch (Exception _) {
+            return false;
+        }
 
         models.forEach(i ->
             i.displayList(""));
+
+        return true;
     }
 
     /**

@@ -72,7 +72,7 @@ final public class TransactionListService {
                     String description,
                     String debit,
                     String credit,
-                    double amount) {
+                    double amount) throws Exception {
 
         Account debitAccount = null;
         Account creditAccount = null;
@@ -90,7 +90,7 @@ final public class TransactionListService {
 
         int state = validate( debitAccount, creditAccount, amount, date);
 
-        if (state == -1) return;
+        if (state == -1) throw new Exception("");
 
         Transaction transaction = new Transaction(date, description, debitAccount, creditAccount, amount);
         list.add(transaction);
@@ -164,64 +164,64 @@ final public class TransactionListService {
 
         String errorMessage = null;
 
-        if (creditAccount.getType() == AccountType.ASSET || creditAccount.getType() == AccountType.EXPENSE) {
-
-            String currentCreditAsset = creditAccount.getAccountName();
-            String theCreditAccountToCompare = null;
-
-            AccountType currentType = creditAccount.getType();
-
-            for (Accounts a : list) {
-
-                errorMessage = "Credit Error: Invalid input for account '" + a.getAccount().getAccountName() + "'.\n" +
-                        "You attempted to input an amount of P" + amount + ", but the current balance for this account is P" + a.getAmount() + ".\n" +
-                        "Please ensure that the transaction amount is within the available balance.";
-
-                AccountType temp = a.getAccount().getType();
-                if (temp == currentType)
-                    theCreditAccountToCompare = a.getAccount().getAccountName();
-                else continue;
-
-                if (currentCreditAsset.contains(theCreditAccountToCompare)) {
-                    double totalBalanceAccount = a.getAmount();
-                    if (amount > totalBalanceAccount) {
-                        JOptionPane.showMessageDialog(null, errorMessage, "Insufficient balance", JOptionPane.ERROR_MESSAGE);
-                        return -1;
-                    }
-                }
-            }
-        }
-
-
-        if (debitAccount.getType() == AccountType.EQUITY ||
-                debitAccount.getType() == AccountType.LIABILITY ||
-            debitAccount.getType() == AccountType.INCOME) {
-
-            String currentCreditAsset = debitAccount.getAccountName();
-            String theCreditAccountToCompare = null;
-
-            AccountType currentType = debitAccount.getType();
-
-            for (Accounts a : list) {
-                errorMessage = "Error: Invalid debit entry for account '" + a.getAccount().getAccountName() + "'.\n" +
-                        "You attempted to debit an amount of P" + amount + ", but the current balance for this account is P" + a.getAmount() + ".\n" +
-                        "Either the account has insufficient funds, or the amount debited exceeds the available balance.";
-
-
-                AccountType temp = a.getAccount().getType();
-                if (temp == currentType)
-                    theCreditAccountToCompare = a.getAccount().getAccountName();
-                else continue;
-
-                if (currentCreditAsset.contains(theCreditAccountToCompare)) {
-                    double totalBalanceAccount = a.getAmount();
-                    if (amount > totalBalanceAccount) {
-                        JOptionPane.showMessageDialog(null, errorMessage, "Insufficient balance, or Overpaying", JOptionPane.ERROR_MESSAGE);
-                        return -1;
-                    }
-                }
-            }
-        }
+//        if (creditAccount.getType() == AccountType.ASSET || creditAccount.getType() == AccountType.EXPENSE) {
+//
+//            String currentCreditAsset = creditAccount.getAccountName();
+//            String theCreditAccountToCompare = null;
+//
+//            AccountType currentType = creditAccount.getType();
+//
+//            for (Accounts a : list) {
+//
+//                errorMessage = "Credit Error: Invalid input for account '" + a.getAccount().getAccountName() + "'.\n" +
+//                        "You attempted to input an amount of P" + amount + ", but the current balance for this account is P" + a.getAmount() + ".\n" +
+//                        "Please ensure that the transaction amount is within the available balance.";
+//
+//                AccountType temp = a.getAccount().getType();
+//                if (temp == currentType)
+//                    theCreditAccountToCompare = a.getAccount().getAccountName();
+//                else continue;
+//
+//                if (currentCreditAsset.contains(theCreditAccountToCompare)) {
+//                    double totalBalanceAccount = a.getAmount();
+//                    if (amount > totalBalanceAccount) {
+//                        JOptionPane.showMessageDialog(null, errorMessage, "Insufficient balance", JOptionPane.ERROR_MESSAGE);
+//                        return -1;
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//        if (debitAccount.getType() == AccountType.EQUITY ||
+//                debitAccount.getType() == AccountType.LIABILITY ||
+//            debitAccount.getType() == AccountType.INCOME) {
+//
+//            String currentCreditAsset = debitAccount.getAccountName();
+//            String theCreditAccountToCompare = null;
+//
+//            AccountType currentType = debitAccount.getType();
+//
+//            for (Accounts a : list) {
+//                errorMessage = "Error: Invalid debit entry for account '" + a.getAccount().getAccountName() + "'.\n" +
+//                        "You attempted to debit an amount of P" + amount + ", but the current balance for this account is P" + a.getAmount() + ".\n" +
+//                        "Either the account has insufficient funds, or the amount debited exceeds the available balance.";
+//
+//
+//                AccountType temp = a.getAccount().getType();
+//                if (temp == currentType)
+//                    theCreditAccountToCompare = a.getAccount().getAccountName();
+//                else continue;
+//
+//                if (currentCreditAsset.contains(theCreditAccountToCompare)) {
+//                    double totalBalanceAccount = a.getAmount();
+//                    if (amount > totalBalanceAccount) {
+//                        JOptionPane.showMessageDialog(null, errorMessage, "Insufficient balance, or Overpaying", JOptionPane.ERROR_MESSAGE);
+//                        return -1;
+//                    }
+//                }
+//            }
+//        }
 
 
         return 0;

@@ -4,6 +4,7 @@ import controller.TransactionController;
 import interfaces.FilterableService;
 import model.entities.Transaction;
 import model.entities.TransactionList;
+import utils.Constants;
 import view.custom.JTableDisplay;
 
 import javax.swing.*;
@@ -26,8 +27,8 @@ final public class TransactionsPage extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(searchPanel());
-
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.getViewport().setBackground(Color.white);
         add(scrollPane);
     }
 
@@ -181,7 +182,7 @@ class TransactionTableModel extends JTableDisplay {
                 String credit = transaction.getCreditAccount().getAccountName();
                 return credit.replaceAll("\\s*\\[.*\\]", "");
             case 4:
-                return "₱" + transaction.getAmount();
+                return Constants.reverseIfNegative(transaction.getAmount());
 
             default:
                 return null;

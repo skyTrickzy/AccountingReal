@@ -3,6 +3,7 @@ package view.components;
 import controller.TransactionController;
 import model.entities.Transaction;
 import model.entities.TransactionList;
+import utils.Constants;
 import view.custom.JTableDisplay;
 
 import javax.swing.*;
@@ -22,6 +23,7 @@ public class GeneralJournalPage extends JPanel {
         setOpaque(false);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         JScrollPane pane = new JScrollPane(table);
+        pane.getViewport().setBackground(Color.WHITE);
         add(pane);
 
         System.out.println(list.size());
@@ -88,8 +90,11 @@ final class GeneralJournalModel extends JTableDisplay {
             return switch (columnIndex) {
                 case 0 -> transaction.getDate(); // Date
                 case 1 -> transaction.getDescription(); // Description
-                case 2 -> transaction.getDebitAccount().getAccountName(); // Debit Account
-                case 3 -> "₱" + transaction.getAmount(); // Debit Amount
+                case 2 -> {
+                   String debit = transaction.getDebitAccount().getAccountName();
+                   yield debit.replaceAll("\\s*\\[.*\\]", "");
+                } // Debit Account
+                case 3 -> Constants.reverseIfNegative(transaction.getAmount()); // Debit Amount
                 default -> null; // For any other columns, return null
             };
         } else {
@@ -97,8 +102,11 @@ final class GeneralJournalModel extends JTableDisplay {
             Transaction transaction = copiedList.get((rowIndex - 1) / 2); // Divide by 2 to access the correct transaction
 
             return switch (columnIndex) {
-                case 2 -> transaction.getCreditAccount().getAccountName(); // Credit Account
-                case 4 -> "₱" + transaction.getAmount(); // Credit Amount
+                case 2 -> {
+                    String credit = transaction.getCreditAccount().getAccountName();
+                    yield credit.replaceAll("\\s*\\[.*\\]", "");
+                } // Credit Account
+                case 4 -> Constants.reverseIfNegative(transaction.getAmount()); // Credit Amount
                 default -> null; // For any other columns, return null
             };
         }

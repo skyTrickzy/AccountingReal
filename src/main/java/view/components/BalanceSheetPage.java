@@ -4,12 +4,15 @@ import controller.TransactionController;
 import model.entities.Account;
 import model.entities.Accounts;
 import model.enums.AccountType;
+import utils.Constants;
 import view.custom.JTableDisplay;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
+
+import static utils.Constants.reverseIfNegative;
 
 public class BalanceSheetPage extends JPanel {
     AssetSideModel assetSideModel = new AssetSideModel();
@@ -32,8 +35,8 @@ public class BalanceSheetPage extends JPanel {
         JScrollPane left = new JScrollPane(assetSideTable);
         JScrollPane right = new JScrollPane(equityLiabilityTable);
 
-        left.getViewport().setOpaque(false);
-        right.getViewport().setOpaque(false);
+        left.getViewport().setBackground(Color.white);
+        right.getViewport().setBackground(Color.white);
 
         leftSide.add(left);
         rightSide.add(right);
@@ -146,7 +149,7 @@ class AssetSideModel extends JTableDisplay{
         if (rowIndex == currentList.size() + 1) {
             return switch (columnIndex) {
                 case 0 -> "Total Assets: ";
-                default -> "₱" + calculateAssets();
+                default -> reverseIfNegative(calculateAssets());
             };
         }
 
@@ -154,7 +157,7 @@ class AssetSideModel extends JTableDisplay{
 
         return switch (columnIndex) {
             case 0 -> temp.getAccount().getAccountName();
-            default -> "₱" + temp.getAmount();
+            default -> reverseIfNegative(temp.getAmount());
         };
     }
 }
@@ -250,7 +253,7 @@ class EquityLiabilityModel extends JTableDisplay {
         if (rowIndex == currentList.size() + 1) {
             return switch (columnIndex) {
                 case 0 -> "Total Equity and Liabilities: ";
-                default -> "₱" + calculateEquityAndLiability();
+                default -> reverseIfNegative(calculateEquityAndLiability());
             };
         }
 
@@ -258,7 +261,7 @@ class EquityLiabilityModel extends JTableDisplay {
 
         return switch (columnIndex) {
             case 0 -> temp.getAccount().getAccountName();
-            default -> "₱" + temp.getAmount();
+            default -> reverseIfNegative(temp.getAmount());
         };
     }
 }

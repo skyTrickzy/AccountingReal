@@ -14,6 +14,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static utils.Constants.reverseIfNegative;
+
 final public class AccountsPage extends JPanel {
     AccountsTableModel tableModel = new AccountsTableModel();
     AccountsTable table = new AccountsTable(tableModel);
@@ -24,7 +26,9 @@ final public class AccountsPage extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         JScrollPane pane = new JScrollPane(table);
+        pane.getViewport().setBackground(Color.white);
         add(pane);
+
 
     }
 
@@ -243,7 +247,7 @@ final class AccountsTableModel extends JTableDisplay {
             }
 
             case 2 -> {
-                return "₱" + (Math.max(acc.getAmount(), 0));
+                return reverseIfNegative(acc.getAmount());
             }
 
             default -> {

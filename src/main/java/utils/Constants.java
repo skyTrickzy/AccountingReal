@@ -1,9 +1,10 @@
 package utils;
 
 import java.awt.*;
+import java.text.NumberFormat;
 
 final public class Constants {
-    public static final int FRAME_WIDTH = 1000;
+    public static final int FRAME_WIDTH = 1200;
     public static final int FRAME_HEIGHT = 700;
     public static final Font HEADER_FONT_ARIAL = new Font("Arial", Font.BOLD, 36);
     public static final String[] INDICATORS =
@@ -37,5 +38,19 @@ final public class Constants {
 //            "Other Income [Income]",
 //            "Other Expenses [Expense]",
     };
+
+    public static String reverseIfNegative(double amount) {
+        String formattedAmount = NumberFormat.getNumberInstance().format(amount);
+
+        String finalBalance = "₱" + formattedAmount;
+
+        if (amount < 0) {
+            double newValue = Math.abs(amount);
+            String newFormattedValue = NumberFormat.getNumberInstance().format(newValue);
+            finalBalance = "(₱" + newFormattedValue + ")";
+        }
+
+        return finalBalance;
+    }
 
 }

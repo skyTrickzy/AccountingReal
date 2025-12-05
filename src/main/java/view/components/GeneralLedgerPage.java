@@ -29,6 +29,7 @@ public class GeneralLedgerPage extends JPanel {
         add(searchPanel());
 
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.getViewport().setBackground(Color.white);
         add(scrollPane);
     }
 
@@ -160,9 +161,9 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
         return switch(columnIndex) {
             case 0 -> a.getDate();
             case 1 -> a.getDescription();
-            case 2 -> a.getDebitAccount().getAccountName();
-            case 3 -> a.getCreditAccount().getAccountName();
-            case 4 -> "₱" + a.getAmount();
+            case 2 -> a.getDebitAccount().getAccountName().replaceAll("\\s*\\[.*\\]", "");
+            case 3 -> a.getCreditAccount().getAccountName().replaceAll("\\s*\\[.*\\]", "");
+            case 4 -> Constants.reverseIfNegative(a.getAmount());
             default -> null;
         };
     }
