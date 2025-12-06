@@ -94,7 +94,7 @@ class TransactionSearchService implements FilterableService {
 
     @Override
     public ArrayList<Transaction> filterable(String query) {
-        System.out.println(TransactionList.getInstance().size());
+
 
 
         if (query == null) {

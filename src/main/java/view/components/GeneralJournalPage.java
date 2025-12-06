@@ -25,8 +25,6 @@ public class GeneralJournalPage extends JPanel {
         JScrollPane pane = new JScrollPane(table);
         pane.getViewport().setBackground(Color.WHITE);
         add(pane);
-
-        System.out.println(list.size());
     }
 }
 

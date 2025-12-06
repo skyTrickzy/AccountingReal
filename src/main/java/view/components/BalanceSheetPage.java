@@ -95,7 +95,6 @@ class AssetSideModel extends JTableDisplay{
         ArrayList<AccountAmount> tempList = new ArrayList<>();
 
         for (Accounts temp : list) {
-            System.out.println(temp.getAccount().getType() + " " +  temp.getAmount());
 
             AccountType currentType = temp.getAccount().getType();
             if (currentType == AccountType.ASSET) {
@@ -212,10 +211,8 @@ class EquityLiabilityModel extends JTableDisplay {
 
             if (currentType == AccountType.INCOME) {
                 netIncome += temp.getAmount();
-                System.out.println(netIncome);
             } else if (currentType == AccountType.EXPENSE) {
                 netIncome -= temp.getAmount();
-                System.out.println(netIncome);
             }
         }
 
