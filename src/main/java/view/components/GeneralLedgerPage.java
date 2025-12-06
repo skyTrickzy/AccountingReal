@@ -2,8 +2,10 @@ package view.components;
 
 import controller.TransactionController;
 import interfaces.FilterableService;
+import model.entities.Account;
 import model.entities.Transaction;
 import model.entities.TransactionList;
+import model.enums.AccountType;
 import utils.Constants;
 import view.custom.JTableDisplay;
 
@@ -13,6 +15,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+
+import static utils.Constants.reverseIfNegative;
 
 public class GeneralLedgerPage extends JPanel {
     GeneralLedgerModel model = new GeneralLedgerModel();
@@ -88,9 +92,14 @@ final class GeneralLedgerTable extends JTable {
  * JTableDisplay is an extension of the JAbstractTableModel
  */
 final class GeneralLedgerModel extends JTableDisplay implements FilterableService {
-    java.lang.String[] headers = {"Date", "Description", "Debit Account", "Credit Account", "Amount"};
+    java.lang.String[] headers = {"Date", "Description", "Debit Account", "Credit Account", "Amount", "Balance"};
     ArrayList<Transaction> list = TransactionList.getInstance();
     ArrayList<Transaction> currentList = new ArrayList<>();
+    private String query = "Cash";
+
+    private static double balanceAtThatTime = 0;
+
+    ArrayList<LedgerAccounts> actualList = new ArrayList<>();
 
     @Override
     /**
@@ -128,11 +137,57 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
      */
     @Override
     public void displayList(String query) {
+        if (query == null || query.isEmpty()) {
+            query = this.query; // we set up a default query which is cash
+        }
+
+        this.query = query;
+
         currentList = filterable(query);
         currentList =  (ArrayList<Transaction>) currentList.stream()
-                .sorted(Comparator.comparing(Transaction::getDate).reversed())  // Sort by LocalDate
+                .sorted(Comparator.comparing(Transaction::getDate))  // Sort by LocalDate
                 .collect(Collectors.toList());
+        actualList.clear();
+
+
+        for (int i = 0; i < currentList.size(); i++) {
+            Transaction current = currentList.get(i);
+
+            System.out.println(current.getDescription() + " " + current.getDate());
+
+            if (!current.getDebitAccount().getAccountName().contains(query) &&
+                    !current.getCreditAccount().getAccountName().contains(query)) continue;
+
+            double cur = getBalanceAtThatTime(query, current.getDebitAccount(), current.getCreditAccount(), current.getAmount());
+
+            actualList.add(new LedgerAccounts(current, cur));
+        }
+
+        balanceAtThatTime = 0;
+
         fireTableDataChanged();
+    }
+
+    public double getBalanceAtThatTime(String query, Account debit, Account credit, double amount) {
+        if (debit.getAccountName().contains(query)) {
+            AccountType type = debit.getType();
+            switch(type) {
+                case ASSET, EXPENSE ->
+                    balanceAtThatTime += amount;
+                case INCOME, LIABILITY, EQUITY -> balanceAtThatTime -= amount;
+            }
+            return balanceAtThatTime;
+        }
+
+        else {
+            AccountType type = credit.getType();
+            switch(type) {
+                case ASSET, EXPENSE ->
+                        balanceAtThatTime -= amount;
+                case INCOME, LIABILITY, EQUITY -> balanceAtThatTime += amount;
+            }
+            return balanceAtThatTime;
+        }
     }
 
     /**
@@ -141,7 +196,7 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
      */
     @Override
     public int getRowCount() {
-        return currentList.size();
+        return actualList.size();
     }
 
     @Override
@@ -157,14 +212,34 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
      */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Transaction a = currentList.get(rowIndex);
+        Transaction a = actualList.get(rowIndex).getTransaction();
+        double balance = actualList.get(rowIndex).getBalance();
         return switch(columnIndex) {
             case 0 -> a.getDate();
             case 1 -> a.getDescription();
             case 2 -> a.getDebitAccount().getAccountName().replaceAll("\\s*\\[.*\\]", "");
             case 3 -> a.getCreditAccount().getAccountName().replaceAll("\\s*\\[.*\\]", "");
-            case 4 -> Constants.reverseIfNegative(a.getAmount());
+            case 4 -> reverseIfNegative(a.getAmount());
+            case 5 -> reverseIfNegative(balance);
             default -> null;
         };
+    }
+}
+
+class LedgerAccounts {
+    Transaction transaction;
+    double balance;
+
+    LedgerAccounts(Transaction transaction, double balance) {
+        this.transaction = transaction;
+        this.balance = balance;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public Transaction getTransaction() {
+        return transaction;
     }
 }

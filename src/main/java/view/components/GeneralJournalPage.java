@@ -53,7 +53,7 @@ final class GeneralJournalModel extends JTableDisplay {
 
     private ArrayList<Transaction> sortList() {
         ArrayList<Transaction> copiedList = (ArrayList<Transaction>) list.stream()
-                .sorted(Comparator.comparing(Transaction::getDate).reversed())  // Sort by LocalDate
+                .sorted(Comparator.comparing(Transaction::getDate))  // Sort by LocalDate
                 .collect(Collectors.toList());
         return copiedList;
     }
