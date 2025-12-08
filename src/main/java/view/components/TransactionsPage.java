@@ -10,6 +10,8 @@ import view.custom.JTableDisplay;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 final public class TransactionsPage extends JPanel {
     private TransactionTableModel tableModel = new TransactionTableModel();
     private TransactionController controller = new TransactionController(tableModel);
-    private TransactionTable table = new TransactionTable(tableModel);
+    private TransactionTable table = new TransactionTable(tableModel, controller);
 
     private JButton searchButton;
     private JTextField searchBar;
@@ -76,8 +78,11 @@ final public class TransactionsPage extends JPanel {
  * so in other words table is the view, The model is the data processor
  */
 class TransactionTable extends JTable {
+    private TransactionController controller;
 
-    public TransactionTable(AbstractTableModel model) {
+    public TransactionTable(AbstractTableModel model, TransactionController controller) {
+        this.controller = controller;
+
         if (model instanceof AbstractTableModel)
             setModel(model);
 
@@ -85,6 +90,19 @@ class TransactionTable extends JTable {
         tableHeader.setFont(new Font("Arial", Font.BOLD, 20));
         setFont(new Font("Arial", Font.PLAIN, 16));
         setOpaque(false);
+
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int selectedRowInView = getSelectedRow();
+                if (e.getKeyCode() == KeyEvent.VK_D)
+                   controller.deleteTransaction(selectedRowInView);  // Delete row when 'D' is pressed
+            }
+        });
+
+        // Set the table to be focusable so it can listen to key events
+        setFocusable(true);
     }
 }
 

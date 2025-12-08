@@ -78,4 +78,9 @@ final public class TransactionController {
         service.clearAll();
         models.forEach(i -> i.displayList(null));
     }
+
+    public void deleteTransaction(int index) {
+        service.remove(index);
+        models.forEach(i -> i.displayList(null));
+    }
 }

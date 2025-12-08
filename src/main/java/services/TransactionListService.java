@@ -111,6 +111,10 @@ final public class TransactionListService {
         list.clear();
     }
 
+    public void remove(int index) {
+        list.remove(index);
+    }
+
     private int validate(Account debitAccount, Account creditAccount, double amount, LocalDate date) {
         ArrayList<Accounts> list = new AccountsPage().getListInstance();
 

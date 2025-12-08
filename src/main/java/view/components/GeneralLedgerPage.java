@@ -106,7 +106,7 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
      * This method creates a list based on the query being passed
      * basically for example in a list of transaction if a single element contains an account of cash
      * then it gets added to the currentList;
-     */
+     **/
     public ArrayList<Transaction> filterable(String e) {
 
         return (ArrayList<Transaction>) list.stream().filter(i -> {
@@ -152,8 +152,6 @@ final class GeneralLedgerModel extends JTableDisplay implements FilterableServic
 
         for (int i = 0; i < currentList.size(); i++) {
             Transaction current = currentList.get(i);
-
-            System.out.println(current.getDescription() + " " + current.getDate());
 
             if (!current.getDebitAccount().getAccountName().contains(query) &&
                     !current.getCreditAccount().getAccountName().contains(query)) continue;
